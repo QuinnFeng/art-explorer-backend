@@ -34,7 +34,7 @@ export async function login(req, res) {
   const { email, password } = req.body;
 
   try {
-    const user = await findOne({ email });
+    const user = await User.findOne({ email });
     if (!user)
       return res.status(400).json({ message: "Invalid email or password" });
 
@@ -44,21 +44,6 @@ export async function login(req, res) {
 
     const token = generateToken(user);
     res.json({ token, user: { id: user._id, username: user.username } });
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-}
-
-export async function getAllUsers(req, res) {
-  try {
-    // Retrieve all arts from the database
-    const users = await User.find({});
-
-    if (!users.length) {
-      return res.status(404).json({ message: "No Users found" });
-    }
-
-    res.status(200).json({ users });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

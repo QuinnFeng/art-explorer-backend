@@ -1,6 +1,8 @@
-const ArtSchema = new mongoose.Schema({
+import { Schema, model } from "mongoose";
+
+const ArtSchema = new Schema({
   id: {
-    type: number,
+    type: String,
     required: true,
     unique: true,
   },

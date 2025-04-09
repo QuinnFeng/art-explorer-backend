@@ -2,14 +2,20 @@ import Art from "../models/Art.js"; // Import Art model
 
 // Create an Art
 export async function createArt(req, res) {
-  const { title, image, iiif_url } = req.body;
+  const { id, title, image, iiif_url } = req.body;
 
   try {
-    const newArt = new Art({ title, image, iiif_url });
+    const existing = await Art.findOne({ id });
+    if (existing) {
+      return res
+        .status(400)
+        .json({ message: "Art with this ID already exists" });
+    }
+    const newArt = new Art({ id, title, image, iiif_url });
     // Save the art entry to the database
     await newArt.save();
     // Respond with the created art
-    res.status(201).json({ art: newArt });
+    res.status(201).json(newArt);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -45,7 +51,7 @@ export async function getArtById(req, res) {
     }
 
     // Respond with the art details
-    res.status(200).json({ art });
+    res.status(200).json(art);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -86,7 +92,7 @@ export async function updateArtById(req, res) {
     }
 
     // Respond with the updated art
-    res.status(200).json({ art: updatedArt });
+    res.status(200).json(updatedArt);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
